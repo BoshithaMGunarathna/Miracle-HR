@@ -11,9 +11,9 @@ const authenticateToken = require('../middleware/auth');
 const router = express.Router();
 
 router.get('/',getAllUsers);
-router.get('/:id', authenticateToken, getUserProfile);
-router.put('/:id', authenticateToken, updateUserProfile);
-router.delete('/:id', authenticateToken, deleteUser);
+router.get('/:id',  getUserProfile);
+router.put('/:id',  updateUserProfile);
+router.delete('/:id',  deleteUser);
 
 
 module.exports = router;
