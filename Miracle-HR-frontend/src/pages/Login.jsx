@@ -14,7 +14,9 @@ const Login = () => {
     return emailRegex.test(email);
   };
   const navigate = useNavigate();  
-  const handleSubmit = (e) => {
+
+
+ const handleSubmit = async (e) => {
     e.preventDefault();
     setEmailError("");
     setPasswordError("");
@@ -35,9 +37,32 @@ const Login = () => {
     }
 
     if (valid) {
-      // Continue with form submission or further logic if validation passes
-      console.log("Form submitted:", { email, password });
-      navigate("/profile");
+      try {
+        const response = await fetch("http://localhost:5000/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          // Store the token in a cookie
+          document.cookie = `authToken=${data.token}; path=/; max-age=3600; Secure; SameSite=Strict`;
+          // Redirect to profile
+          navigate("/profile");
+        } else {
+          const errorText = await response.text();
+          if (response.status === 400) {
+            setEmailError("Invalid credentials");
+          } else {
+            console.error("Login failed:", errorText);
+          }
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
     }
   };
 
