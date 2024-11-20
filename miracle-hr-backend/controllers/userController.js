@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+
 
 
 
@@ -29,12 +31,27 @@ const getUserProfile = async (req, res) => {
 
 const updateUserProfile = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.user.id, req.body, { new: true }).select('-password');
+    const userId = req.params.id; 
+    const updateData = req.body;   
+
+    // If the password is being updated, hash it before updating the user
+    if (updateData.password) {
+      const salt = await bcrypt.genSalt(10);
+      updateData.password = await bcrypt.hash(updateData.password, salt);
+    }
+
+    const user = await User.findByIdAndUpdate(userId, updateData, { new: true }).select('-password');
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     res.status(200).json(user);
   } catch (error) {
+    console.error('Error updating user:', error);
     res.status(500).send(error.message);
   }
 };
+
 
 const deleteUser = async (req, res) => {
   try {
@@ -48,8 +65,8 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
   
-  getAllUsers,
   getUserProfile,
   updateUserProfile,
   deleteUser,
+  getAllUsers
 };
