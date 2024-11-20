@@ -1,77 +1,118 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar'; // Adjust the import path according to your file structure
 import Sidebar from '../../components/Menue'; // Adjust the import path according to your file structure
 import Heading from '../../components/Heading'; // Import the Heading component
 import SubHeading from '../../components/SubHeading'; 
 import DynamicTable from '../../components/Table'; // Import your DynamicTable component
 import 'react-datepicker/dist/react-datepicker.css';
+import axios from 'axios';
 
 const Requests = () => {
-  // Sample attendance data
-  const attendanceData = [
-    { id: '123', name: 'John', reason:'Annual Leave',leaves:'4', firstDay:'2024-10-07', lastDay:'2024-10-10', days:'3' },
-    { id: '124', name: 'Doe', reason:'Sick Leave',leaves:'4', firstDay:'2024-10-01', lastDay:'2024-10-02', days:'2' },
-    { id: '125', name: 'Alice', reason:'Personal Leave',leaves:'4', firstDay:'2024-10-05', lastDay:'2024-10-05', days:'1' },
-    // Add more data as needed
-  ];
+  // State to hold leave requests data from the backend
+  const [leaveRequests, setLeaveRequests] = useState([]);
+  const [loading, setLoading] = useState(true); // For loading state
+  const [updatingId, setUpdatingId] = useState(null); // To track the leave request being updated
+  const [statusUpdateInProgress, setStatusUpdateInProgress] = useState(false); // Disable buttons during update
 
-  const [selectedDate] = useState(null);
+  // Fetch leave requests data from API
+  useEffect(() => {
+    const fetchLeaveRequests = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/leave');
+        setLeaveRequests(response.data.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching leave requests:', error);
+        setLoading(false);
+      }
+    };
 
-  // Filter data for the selected date
-  const filteredData = selectedDate
-    ? attendanceData.filter(item => {
-        const itemDate = new Date(item.firstDay).toDateString(); // Change to use firstDay
-        const selectedDateString = selectedDate.toDateString();
-        return itemDate === selectedDateString;
-      })
-    : attendanceData; // Show all data if no date is selected
+    fetchLeaveRequests();
+  }, []);
 
-  // Define columns with display names
+  // Handle approve button click
+  const handleApprove = async (leaveId) => {
+    const confirmed = window.confirm('Are you sure you want to approve this leave request?');
+    if (confirmed) {
+      setUpdatingId(leaveId);
+      setStatusUpdateInProgress(true);
+      try {
+        const response = await axios.put(`http://localhost:5000/api/leave/${leaveId}/status`, { status: 'approved' });
+        setLeaveRequests((prevRequests) =>
+          prevRequests.map((leave) =>
+            leave._id === leaveId ? { ...leave, status: 'approved' } : leave
+          )
+        );
+        alert('Leave status updated to Approved.');
+      } catch (error) {
+        console.error('Error updating leave status:', error);
+        alert('Failed to update leave status.');
+      } finally {
+        setStatusUpdateInProgress(false);
+      }
+    }
+  };
+
+  // Handle reject button click
+  const handleReject = async (leaveId) => {
+    const confirmed = window.confirm('Are you sure you want to reject this leave request?');
+    if (confirmed) {
+      setUpdatingId(leaveId);
+      setStatusUpdateInProgress(true);
+      try {
+        const response = await axios.put(`http://localhost:5000/api/leave/${leaveId}/status`, { status: 'rejected' });
+        setLeaveRequests((prevRequests) =>
+          prevRequests.map((leave) =>
+            leave._id === leaveId ? { ...leave, status: 'rejected' } : leave
+          )
+        );
+        alert('Leave status updated to Rejected.');
+      } catch (error) {
+        console.error('Error updating leave status:', error);
+        alert('Failed to update leave status.');
+      } finally {
+        setStatusUpdateInProgress(false);
+      }
+    }
+  };
+
+  // Columns for the leave request table
   const columns1 = [
-    { label: 'Employee ID', key: 'id' },
-    { label: 'Name', key: 'name' },
+    // { label: 'Employee ID', key: '_id' },
+    { label: 'Name', key: 'firstName' },
+    { label: 'Leave Type', key: 'leaveType' },
     { label: 'Reason', key: 'reason' },
-    { label: 'Remaining no.of Leaves', key: 'leaves' },
-    { label: 'First Day of Absence', key: 'firstDay' },
-    { label: 'Last Day of Absence', key: 'lastDay' },
-    { label: 'No. of Days Absence', key: 'days' },
-    { label: 'Action', key: 'action' }, // Add Action column
+    { label: 'Start Date', key: 'startDate' },
+    { label: 'End Date', key: 'endDate' },
+    { label: 'Status', key: 'status' },
+    { label: 'Action', key: 'action' },
   ];
-
-  const handleApprove = (row) => {
-    console.log('Update:', row);
-    // Add your approval logic here
-  };
-
-  const handleReject = (row) => {
-    console.log('Delete:', row);
-    // Add your rejection logic here
-  };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen" >
       <Navbar />
       <div className="flex flex-grow">
         <Sidebar />
         <div className="flex-1 p-20">
           <Heading text="Admin" />
-          <div className='mt-10 mb-10'>
+          <div className="mt-10 mb-10">
             <SubHeading text="Leave Requests" />
           </div>
-          <DynamicTable 
-            columns={columns1} // Pass columns array
-            data={filteredData} 
-            Text1='Approve'
-  Text2='Reject'
-  Color1='#218838' // Custom color for approve button
-  Color2='#c82333' // Custom color for reject button
-  onApprove={handleApprove} // Pass approve handler
-  onReject={handleReject} 
-          />
-
-
-       
-          
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <DynamicTable
+              columns={columns1}
+              data={leaveRequests}
+              Text1="Approve"
+              Text2="Reject"
+              Color1="#218838"
+              Color2="#c82333"
+              onApprove={(row) => handleApprove(row._id)}  
+              onReject={(row) => handleReject(row._id)}    
+              disabled={statusUpdateInProgress}
+            />
+          )}
         </div>
       </div>
     </div>
@@ -79,4 +120,3 @@ const Requests = () => {
 };
 
 export default Requests;
-
