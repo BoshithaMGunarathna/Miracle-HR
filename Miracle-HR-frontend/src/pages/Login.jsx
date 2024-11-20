@@ -7,16 +7,14 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const navigate = useNavigate();
 
   const validateEmail = (email) => {
-    // Simple email validation regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
-  const navigate = useNavigate();  
 
-
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setEmailError("");
     setPasswordError("");
@@ -48,8 +46,11 @@ const Login = () => {
 
         if (response.ok) {
           const data = await response.json();
-          // Store the token in a cookie
+          // Store the token and user data in cookies
           document.cookie = `authToken=${data.token}; path=/; max-age=3600; Secure; SameSite=Strict`;
+          document.cookie = `userData=${encodeURIComponent(
+            JSON.stringify(data.user)
+          )}; path=/; max-age=3600; Secure; SameSite=Strict`;
           // Redirect to profile
           navigate("/profile");
         } else {
@@ -105,7 +106,7 @@ const Login = () => {
 
         <button
           type="submit"
-          style={{ backgroundColor: '#00A8CE' }}
+          style={{ backgroundColor: "#00A8CE" }}
           className="w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           Login
