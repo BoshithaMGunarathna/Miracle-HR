@@ -6,9 +6,9 @@ dotenv.config();
 
 const register = async (req, res) => {
   try {
-    const { name, email, password, role, bio, phone } = req.body;
+    const { firstName, lastName,position,roleDescription, email, password, role,  phone } = req.body;
     console.log(req.body);
-    if (!name || !email || !password || !bio || !phone) {
+    if (!firstName || !email || !password || !roleDescription || !phone) {
       return res.status(400).send('Name, email, password, bio, and phone are required.');
     }
     const existingUser = await User.findOne({ email });
@@ -18,11 +18,13 @@ const register = async (req, res) => {
 
     // Create a new user instance
     const user = new User({ 
-      name, 
+      firstName,
+      lastName,
+      position,
+      roleDescription,
       email, 
       password, 
       role: role || 'employee',
-      bio, 
       phone
      
     });
@@ -50,11 +52,15 @@ const login = async (req, res) => {
       token,
       user: {
         id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         name: user.name,
         email: user.email,
         role: user.role,
-        bio: user.bio,
-        phone: user.phone
+        phone: user.phone,
+        roleDescription: user.roleDescription,
+        position: user.position,
+        photo: user.photo,
      
       },
     });
