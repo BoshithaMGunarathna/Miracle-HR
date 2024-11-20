@@ -8,6 +8,7 @@ const Register = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [position, setPosition] = useState("");
   const [roleDescription, setRoleDescription] = useState("");
   const [photo, setPhoto] = useState(null);
@@ -27,6 +28,8 @@ const Register = () => {
   const navigate = useNavigate();  
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Reset errors
     setFirstNameError("");
     setLastNameError("");
     setEmailError("");
@@ -34,14 +37,10 @@ const Register = () => {
     setPositionError("");
     setRoleDescriptionError("");
     setPhotoError("");
-
-    e.preventDefault();
-    axios.post('',{firstName,lastName,email,password,position,roleDescription,photo})
-    .then (result=>console.log(result))
-    .catch (err=>console.log(err))
-
+  
     let isValid = true;
-
+  
+    // Validation
     if (!firstName) {
       setFirstNameError("First name is required.");
       isValid = false;
@@ -65,18 +64,37 @@ const Register = () => {
       setPositionError("Position is required.");
       isValid = false;
     }
-    if (!photo) {
-      setPhotoError("Photo is required.");
-      isValid = false;
-    }
+    // if (!photo) {
+    //   setPhotoError("Photo is required.");
+    //   isValid = false;
+    // }
     if (!roleDescription) {
       setRoleDescriptionError("Role description is required.");
       isValid = false;
     }
-
+  
     if (isValid) {
-      console.log("Form submitted:", { firstName, lastName, email, password, position, roleDescription, photo });
-      navigate("/login");
+      // Make the API call
+      axios.post('http://localhost:5000/api/auth/register', {
+        firstName,
+        lastName,
+        email,
+        position,
+        password,
+        position,
+        roleDescription,
+        phone
+        // photo
+      })
+        .then(result => {
+          console.log("Registration successful:", result);
+          navigate("/login");
+        })
+        .catch(err => {
+          console.error("Registration failed:", err);
+        });
+    } else {
+      console.log("Form contains errors, please correct them.");
     }
   };
 
@@ -149,6 +167,21 @@ const Register = () => {
             />
             {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
           </div>
+        </div>
+        <div className="mt-8">
+          <label htmlFor="role" className="block text-sm font-medium text-gray-700">
+            Phone
+          </label>
+          <input
+          type="number"
+            id="phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md text-gray-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+            placeholder="Enter a phone number"
+            rows="4"
+          />
+          {roleDescriptionError && <p className="text-red-500 text-sm mt-1">{roleDescriptionError}</p>}
         </div>
 
         <div className="flex space-x-4">
