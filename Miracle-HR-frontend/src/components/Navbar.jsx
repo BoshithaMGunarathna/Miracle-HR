@@ -12,13 +12,6 @@ const Navbar = () => {
     sessionStorage.removeItem('token');  
     document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; Secure; SameSite=Strict;';
     document.cookie = 'userData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; Secure; SameSite=Strict;';
-    
-
-    // Optionally, you can clear other cookies as well, for example:
-    // document.cookie = 'userData=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-
-    // Optionally, reset any other state here if you're using context or Redux
-    // For example: dispatch(logoutAction());
 
     console.log("User logged out");
     navigate('/login');  
