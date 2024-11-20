@@ -1,25 +1,103 @@
-import React, { useState } from 'react';
-import Navbar from '../components/Navbar'; // Adjust the import path according to your file structure
-import Sidebar from '../components/Menue'; // Adjust the import path according to your file structure
-import Heading from '../components/Heading'; // Import the Heading component
+import React, { useState, useEffect } from 'react';
+import Navbar from '../components/Navbar';
+import Sidebar from '../components/Menue';
+import Heading from '../components/Heading';
 
 const ApplyLeave = () => {
   const [leaveType, setLeaveType] = useState('normal'); // Default set to 'normal'
   const [reason, setReason] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [statusMessage, setStatusMessage] = useState('');
+
+  const [userData, setUserData] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    email: ''
+  });
+
+  const getUserData = () => {
+    const userDataCookie = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("userData="));
+    return userDataCookie
+      ? JSON.parse(decodeURIComponent(userDataCookie.split("=")[1]))
+      : null;
+  };
+
+  useEffect(() => {
+    const storedUserData  = getUserData();
+    if (storedUserData ) {
+      setUserData({
+        firstName: storedUserData.firstName || '',
+        lastName: storedUserData.lastName || '',
+        phone: storedUserData.phone || '',
+        email: storedUserData.email || '',
+        userId : storedUserData.id || ''
+      });
+      console.log(userData);
+    }
+  }, []);
+ 
+
+
 
   // Handle radio button change
   const handleLeaveTypeChange = (event) => {
     setLeaveType(event.target.value);
   };
 
+  // Handle form submission
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const leaveData = {
+      ...userData,
+      leaveType,
+      reason: leaveType === 'normal' ? reason : '', 
+      startDate,
+      endDate,
+    };
+
+    try {
+      const response = await fetch('http://localhost:5000/api/leave/apply', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(leaveData),
+      });
+      console.log(leaveData);
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setStatusMessage('Leave application submitted successfully!');
+        // Reset form after successful submit
+        setLeaveType('normal');
+        setReason('');
+        setStartDate('');
+        setEndDate('');
+      } else {
+        setStatusMessage(data.message || 'Something went wrong. Please try again.');
+      }
+    } catch (error) {
+      setStatusMessage('Error: ' + error.message);
+    }
+  };
+
+  // Get today's date to disable past dates in date picker
+  const today = new Date().toISOString().split('T')[0];
+
   return (
     <div>
-      <Navbar /> {/* Navbar is outside the flex container to take up full width */}
+      <Navbar />
       <div className="flex">
-        <Sidebar /> {/* Sidebar placed after the Navbar */}
+        <Sidebar />
         <div className="flex-1 p-20">
-          <Heading text="Apply for Leave" /> {/* Use the Heading component here */}
-          <form className="mt-4">
+          <Heading text="Apply for Leave" />
+          <form className="mt-4" onSubmit={handleSubmit}>
 
             {/* Radio Buttons for Leave Type */}
             <fieldset className="mt-10 mb-10">
@@ -63,15 +141,16 @@ const ApplyLeave = () => {
               </div>
             </fieldset>
 
-            {/* Name Fields */}
+            {/* Name Fields (No need for user to input) */}
             <div className="flex space-x-4">
               <div className="flex-1">
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
                 <input
                   type="text"
                   id="firstName"
+                  value={userData.firstName}
+                  readOnly
                   className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-                  placeholder="First Name"
                 />
               </div>
               <div className="flex-1">
@@ -79,8 +158,9 @@ const ApplyLeave = () => {
                 <input
                   type="text"
                   id="lastName"
+                  value={userData.lastName}
+                  readOnly
                   className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-                  placeholder="Last Name"
                 />
               </div>
             </div>
@@ -91,8 +171,9 @@ const ApplyLeave = () => {
               <input
                 type="tel"
                 id="phone"
+                value={userData.phone}
+                readOnly
                 className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-                placeholder="Phone Number"
               />
             </div>
 
@@ -102,8 +183,9 @@ const ApplyLeave = () => {
               <input
                 type="email"
                 id="email"
+                value={userData.email}
+                readOnly
                 className="mt-1 block w-full border border-gray-300 rounded-md p-2"
-                placeholder="Email"
               />
             </div>
 
@@ -114,7 +196,10 @@ const ApplyLeave = () => {
                 <input
                   type="date"
                   id="startDate"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
                   className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                  min={today}
                 />
               </div>
               <div className="flex-1">
@@ -122,7 +207,10 @@ const ApplyLeave = () => {
                 <input
                   type="date"
                   id="endDate"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
                   className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+                  min={today}
                 />
               </div>
             </div>
@@ -155,8 +243,14 @@ const ApplyLeave = () => {
                 Submit Leave Application
               </button>
             </div>
-
           </form>
+
+          {/* Status Message */}
+          {statusMessage && (
+            <div className="mt-4 p-2 bg-green-100 text-green-700">
+              {statusMessage}
+            </div>
+          )}
         </div>
       </div>
     </div>
