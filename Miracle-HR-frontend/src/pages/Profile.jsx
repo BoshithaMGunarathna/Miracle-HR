@@ -103,37 +103,37 @@ const Profile = () => {
         <Sidebar />
         <div className="flex-1 p-20">
           <Heading text="Profile" />
-
+  
           <div className="flex justify-center items-center h-[60vh] mt-10">
             <div className="max-w-sm max-h-m bg-white rounded-lg shadow-md overflow-hidden">
               <div className="bg-gradient-to-r from-[#6E2878] to-[#034E7C] h-32 relative">
                 <div className="absolute inset-x-0 top-full transform -translate-y-1/2 flex justify-center">
                   <img
                     className="w-36 h-36 rounded-full border-4 border-white"
-                    src={userData.profilePicture || person}
+                    src={userData.photo || person}
                     alt="User Profile Picture"
                   />
                 </div>
               </div>
-
+  
               <div className="p-6 mt-12 text-center">
                 <h2 className="text-lg font-semibold text-gray-900 mt-6">
-                  {userData.name || "not provided yet"}
+                  {userData.firstName || "Not provided yet"} {userData.lastName || "Not provided yet"}
                 </h2>
-                <p className="text-gray-800">{userData.role || "Software Engineer"}</p>
+                <p className="text-gray-800">{userData.position || "Software Engineer"}</p>
                 <p className="mt-4 text-gray-600 mb-5">
-                  {userData.bio || "Not entered a bio yet. Click the edit button to add one."}
+                  {userData.roleDescription || "Not entered a role description yet. Click the edit button to add one."}
                 </p>
-
+  
                 <div className="flex items-center p-2 justify-center">
                   <FaPhoneAlt size={20} className="mr-5 text-gray-800" />
-                  {userData.phone || "not provided yet"}
+                  {userData.phone || "Not provided yet"}
                 </div>
                 <div className="flex items-center p-2 justify-center">
                   <MdEmail size={20} className="mr-5 text-gray-800" />
-                  {userData.email || "not provided yet"}
+                  {userData.email || "Not provided yet"}
                 </div>
-
+  
                 <button
                   className="mt-5 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                   onClick={() => setIsEditing(true)}
@@ -145,27 +145,47 @@ const Profile = () => {
           </div>
         </div>
       </div>
-
+  
       {isEditing && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white rounded-lg p-6 w-96">
             <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
             <form onSubmit={handleUpdateProfile}>
               <div className="mb-4">
-                <label className="block text-gray-700">Name</label>
+                <label className="block text-gray-700">First Name</label>
                 <input
                   type="text"
-                  name="name"
-                  value={formData.name || userData.name || ""}
+                  name="firstName"
+                  value={formData.firstName || userData.firstName || ""}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border rounded"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-gray-700">Bio</label>
+                <label className="block text-gray-700">Last Name</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName || userData.lastName || ""}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Position</label>
+                <input
+                  type="text"
+                  name="position"
+                  value={formData.position || userData.position || ""}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Role Description</label>
                 <textarea
-                  name="bio"
-                  value={formData.bio || userData.bio || ""}
+                  name="roleDescription"
+                  value={formData.roleDescription || userData.roleDescription || ""}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border rounded"
                 />
@@ -211,6 +231,7 @@ const Profile = () => {
       )}
     </div>
   );
+  
 };
 
 export default Profile;
