@@ -2,7 +2,7 @@ import React from 'react';
 
 const DynamicTable = ({ columns, data, onApprove, onReject, Text1, Text2, Color1, Color2 }) => {
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto  max-h-80 overflow-y-auto">
       <table className="min-w-full bg-white border border-gray-300 rounded-lg shadow-md">
         <thead>
           <tr>
