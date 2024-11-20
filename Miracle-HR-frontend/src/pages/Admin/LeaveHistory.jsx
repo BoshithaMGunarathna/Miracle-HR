@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../components/Navbar'; // Adjust the import path according to your file structure
 import Sidebar from '../../components/Menue'; // Adjust the import path according to your file structure
 import Heading from '../../components/Heading'; // Import the Heading component
@@ -6,36 +6,68 @@ import SubHeading from '../../components/SubHeading';
 import DynamicTable from '../../components/Table'; // Import your DynamicTable component
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import axios from 'axios'; // Make sure to import axios for API calls
 
 const LeaveHistory = () => {
-  // Sample attendance data
-  const attendanceData = [
-    { id: '123', name: 'John', reason: 'Annual Leave', firstDay: '2024-10-07', lastDay: '2024-10-10', days: '3' },
-    { id: '124', name: 'Doe', reason: 'Sick Leave', firstDay: '2024-10-01', lastDay: '2024-10-02', days: '2' },
-    { id: '125', name: 'Alice', reason: 'Personal Leave', firstDay: '2024-10-05', lastDay: '2024-10-05', days: '1' },
-    // Add more data as needed
-  ];
+  const [leaveRequests, setLeaveRequests] = useState([]); // To store leave requests data
+  const [loading, setLoading] = useState(true); // Loading state to show a loading spinner or message
+  const [selectedDate, setSelectedDate] = useState(null); // For date filter
+  const [nameFilter, setNameFilter] = useState(''); // For name filter
 
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [nameFilter, setNameFilter] = useState(''); // State for name filter
+  // Fetch only approved leave requests from the API
+  useEffect(() => {
+    const fetchApprovedLeaveRequests = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/leave'); // Update with the correct API URL
+        const approvedRequests = response.data.data.filter(request => request.status === 'approved'); // Filter for approved leave requests
+        setLeaveRequests(approvedRequests);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching leave requests:', error);
+        setLoading(false);
+      }
+    };
 
-  // Filter data for the selected date and name
-  const filteredData = attendanceData.filter(item => {
-    const firstDay = new Date(item.firstDay);
-    const lastDay = new Date(item.lastDay);
-    const matchesDate = selectedDate ? selectedDate >= firstDay && selectedDate <= lastDay : true; // Check if selectedDate falls within firstDay and lastDay
-    const matchesName = item.name.toLowerCase().includes(nameFilter.toLowerCase()); // Check if name matches filter
-    return matchesDate && matchesName; // Filter based on both criteria
+    fetchApprovedLeaveRequests();
+  }, []);
+
+
+    // Calculate total leave days for each request
+    const calculateTotalDays = (startDate, endDate) => {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const diffTime = Math.abs(end - start); // Difference in milliseconds
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // Convert milliseconds to days
+      return diffDays;
+    };
+
+
+
+   // Filter the leave requests based on selected date and name
+   const filteredData = leaveRequests.filter(item => {
+    const firstDay = new Date(item.startDate); // Assuming startDate is the date the leave begins
+    const lastDay = new Date(item.endDate); // Assuming endDate is the date the leave ends
+    const matchesDate = selectedDate ? selectedDate >= firstDay && selectedDate <= lastDay : true; // Filter by date
+    const matchesName = item.firstName.toLowerCase().includes(nameFilter.toLowerCase()); // Filter by name
+    return matchesDate && matchesName; // Return filtered results
   });
 
+  // Add total days column to the data
+  const updatedData = filteredData.map(item => ({
+    ...item,
+    totalDays: calculateTotalDays(item.startDate, item.endDate) // Add totalDays field
+  }));
+
+  // Table columns
   const columns2 = [
-    { label: 'Employee ID', key: 'id' },
-    { label: 'Name', key: 'name' },
+   
+    { label: 'Name', key: 'firstName' },
+    { label: 'Leave Type', key: 'leaveType' },
     { label: 'Reason', key: 'reason' },
-    { label: 'First Day of Absence', key: 'firstDay' },
-    { label: 'Last Day of Absence', key: 'lastDay' },
-    { label: 'No. of Days Absence', key: 'days' },
-  
+    { label: 'Start Date', key: 'startDate' },
+    { label: 'End Date', key: 'endDate' },
+    { label: 'Total Days', key: 'totalDays' },
+    { label: 'Status', key: 'status' },
   ];
 
   return (
@@ -74,10 +106,15 @@ const LeaveHistory = () => {
             </div>
           </div>
 
-          <DynamicTable 
-            columns={columns2} // Pass columns array
-            data={filteredData} 
-          />
+          {/* Display loading message or the table */}
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <DynamicTable 
+              columns={columns2} // Pass columns array
+              data={updatedData} 
+            />
+          )}
         </div>
       </div>
     </div>
