@@ -1,8 +1,0 @@
-//include node modules
-node_modules/
-//include build files
-build/
-//include logs
-logs/
-//include coverage reports
-coverage/
