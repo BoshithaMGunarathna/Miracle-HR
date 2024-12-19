@@ -122,7 +122,7 @@ app.post("/start-recognition", (req, res) => {
     return res.status(400).send("Recognition already running.");
   }
 
-  pythonProcess = spawn("python3", ["app.py"]);
+  pythonProcess = spawn("python", ["app.py"]);
 
   pythonProcess.stdout.on("data", (data) => {
     const result = data.toString().trim();
@@ -250,12 +250,12 @@ app.post('/login', (req, res) => {
 
             if (storedPassword === password) {  
                 // Generate JWT token
-                const token = jwt.sign({ emp_id: user.emp_id }, SECRET_KEY, { expiresIn: '1h' });
+                const token = jwt.sign({ emp_id: user.emp_id, role: user.role }, SECRET_KEY, { expiresIn: '1h' });
                 return res.json({
                     status: "success", 
                     message: "Login successful", 
                     token,
-                    data: { user, emp_id: user.emp_id }
+                    data: { user, emp_id: user.emp_id, role: user.role }
                 });
             } else {
                 return res.json({ status: "error", message: "Invalid credentials" });
