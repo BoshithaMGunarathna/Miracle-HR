@@ -44,21 +44,21 @@ const [endDate, setEndDate] = useState(null);
     axios.get(`http://localhost:8081/attendance/${emp_id}`)
       .then(response => {
         console.log('Fetched leave data:', response.data.data);
-        setAttendanceData(response.data.data); // Set leave data into state
-        setLoading(false); // Stop loading once data is fetched
+        setAttendanceData(response.data.data || []); // Fallback to empty array if data is null/undefined
+        setLoading(false);
       })
       .catch(error => {
         console.error('Error fetching employee data:', error);
         setAlertMessage("Failed To Load Attendance Data!");
-            setAlertSeverity('error');
-            setShowAlert(true);
-            setTimeout(() => {
-              setShowAlert(false);
-            }, 5000);
-
+        setAlertSeverity('error');
+        setShowAlert(true);
+        setTimeout(() => {
+          setShowAlert(false);
+        }, 5000);
         setLoading(false);
       });
   };
+  
   useEffect(() => {
     fetchAttendance();
   }, []);
@@ -176,16 +176,16 @@ const [endDate, setEndDate] = useState(null);
         : true;
         return matchesDate;
       })
-    : attendance;
+      : attendance || [];
 
 
-    const formattedData = filteredData.map(item => {
-      return {
-        ...item,
-        date: formatDate(item.date), // Format date
-        
-      };
-    });
+      const formattedData = Array.isArray(filteredData) ? filteredData.map(item => {
+        return {
+          ...item,
+          date: formatDate(item.date), // Format date
+        };
+      }) : [];
+      
 
   const columns = [
     { label: 'Date', key: 'date' },
@@ -258,7 +258,7 @@ const [endDate, setEndDate] = useState(null);
           <CustomDialog
           isOpen={isDialogOpen}
           title="Confirm Action"
-          message={"Are you sure you want to remove this leave record?"}
+          message={"Are you sure you want to remove this leave record? This will send a Request to the Admin for Approval."}
           onClose={closeDialog}
           onConfirm={confirmDelete}
         />
