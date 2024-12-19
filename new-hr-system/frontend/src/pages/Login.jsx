@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import AuthCard from "../components/AuthCard";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { useAuth } from '../pages/AuthContext';
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -11,12 +13,15 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState("");
   const [serverError, setServerError] = useState("");
 
+
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
   const navigate = useNavigate();
+
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,7 +30,7 @@ const Login = () => {
     setServerError("");
     
     let valid = true;
-
+  
     if (!email) {
       setEmailError("Email is required.");
       valid = false;
@@ -33,22 +38,30 @@ const Login = () => {
       setEmailError("Please enter a valid email address.");
       valid = false;
     }
-
+  
     if (!password) {
       setPasswordError("Password is required.");
       valid = false;
     }
-
+  
     if (valid) {
       try {
         const res = await axios.post("http://localhost:8081/login", { email, password });
         if (res.data.status === "success") {
-          localStorage.setItem("emp_id", res.data.data.emp_id); // Store emp_id
-          localStorage.setItem("token", res.data.token); // Store JWT token
-
-          const emp_id = res.data.data.emp_id; // Retrieve emp_id from response
-          navigate(`/profile/${emp_id}`);
-          
+          const { emp_id, role } = res.data.data;
+          const token = res.data.token;
+  
+          // Use the login function from AuthContext instead of directly setting localStorage
+          login({ emp_id, role, token });
+  
+          // Redirect based on the user's role
+          if (role === "admin") {
+            navigate("/admin/");
+          } else if (role === "employee") {
+            navigate("/leave");
+          } else {
+            navigate(`/profile/${emp_id}`);
+          }
         } else {
           setServerError(res.data.message || "Login failed");
         }
@@ -57,7 +70,6 @@ const Login = () => {
       }
     }
   };
-
 
   return (
     <AuthCard
