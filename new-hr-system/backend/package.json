@@ -11,8 +11,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tensorflow/tfjs-node": "^4.22.0",
+    "@tensorflow/tfjs-node": "^4.20.0",
     "@vladmandic/face-api": "^1.7.14",
+    "backend": "file:",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "child_process": "^1.0.2",
@@ -25,6 +26,7 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.11.5",
     "node-cron": "^3.0.3",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "react-webcam": "^7.2.0"
   }
 }
