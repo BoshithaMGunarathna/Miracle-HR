@@ -7,6 +7,7 @@ import DynamicTable from '../components/Table';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
+import axiosClient from '../../axios-client';
 
 const LeaveHistory = () => {
   const [leaveHistory, setLeaveHistory] = useState([]); 
@@ -17,7 +18,7 @@ const LeaveHistory = () => {
   // Fetch employee leave history from API
   const fetchEmployees = () => {
     const emp_id = localStorage.getItem("emp_id");
-    axios.get(`http://localhost:8081/history/${emp_id}`)
+    axiosClient.get(`/history/${emp_id}`)
       .then(response => {
         console.log('Fetched leave data:', response.data.data);
         setLeaveHistory(response.data.data); // Set leave data into state
