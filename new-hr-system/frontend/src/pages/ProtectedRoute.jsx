@@ -17,7 +17,7 @@ export const ProtectedRoute = ({ children, roles }) => {
       <Navigate to="/profile/:emp_id" replace />;
     } else if (user.role === "employee") {
       alert("You are not authorized to view this page. Redirecting to Employee Dashboard.");
-      <Navigate to="/profile/:emp_id" replace />;
+      <Navigate to="/profile/:emp_id"/>;
     }
     else if (user.role === "hr") {
       alert("You are not authorized to view this page. Redirecting to HR Dashboard.");
