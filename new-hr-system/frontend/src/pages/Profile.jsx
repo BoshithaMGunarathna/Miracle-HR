@@ -9,6 +9,7 @@ import person from "../assets/images/person.jpg";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import axiosClient from '../../axios-client';
 
 const Profile = () => {
 
@@ -19,8 +20,8 @@ const Profile = () => {
     const emp_id = localStorage.getItem("emp_id");
     const token = localStorage.getItem("token");
 
-    axios
-      .get(`http://localhost:8081/profile/${emp_id}`, {
+    axiosClient
+      .get(`/profile/${emp_id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -38,7 +39,11 @@ const Profile = () => {
   }, []);
 
 
+
   if (!userData) return <p>Loading...</p>;
+
+  const baseURL = axiosClient.defaults.baseURL;
+  const imageUrl = baseURL ? baseURL + 'images/' + userData.photo : '/path/to/default-image.jpg';
  
   return (
     <div>
@@ -57,7 +62,7 @@ const Profile = () => {
                 <div className="absolute inset-x-0 top-full transform -translate-y-1/2 flex justify-center">
                   <img
                     className="w-36 h-36 rounded-full border-4 border-white" // Increased size here
-                    src={'http://localhost:8081/images/'+ userData.photo}
+                    src={imageUrl}
                     alt="User Profile Picture"
                   />
                 </div>
