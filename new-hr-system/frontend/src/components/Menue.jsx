@@ -14,6 +14,9 @@ const Sidebar = () => {
   const [hrOpen, setHROpen] = useState(false);
   const { user } = useAuth(); // Get user data from AuthContext
 
+  const handleMouseEnter = () => setIsOpen(true);
+  const handleMouseLeave = () => setIsOpen(false);
+
   const toggleSidebar = () => setIsOpen(!isOpen);
   const toggleAdmin = () => {
     setIsOpen(true);
@@ -27,47 +30,49 @@ const Sidebar = () => {
   // Components for each role
   const EmployeeLinks = () => (
     <>
+        <li className="flex items-center p-2 hover:bg-[#034e7c]">
+        <NavLink to="/dashboard" className="flex items-center w-full">
+          <MdSpaceDashboard size={20} className="mr-2 ml-2 mb-4 mt-3" />
+          <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>Dashboard</span>
+        </NavLink>
+      </li>
+
       <li className="flex items-center p-2 hover:bg-[#034e7c]">
         <NavLink to="/mark-attendance" className="flex items-center w-full">
-          <HiMiniCheckCircle size={20} className="mr-2 ml-2 mb-4 mt-3" />
-          <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Mark Attendance</span>
+          <HiMiniCheckCircle size={20} className="mr-2 ml-2 mb-4 mt-3 " />
+          <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>Mark Attendance</span>
         </NavLink>
       </li>
 
       <li className="flex items-center p-2 hover:bg-[#034e7c]">
         <NavLink to="/attendance" className="flex items-center w-full">
           <FaUserCheck size={20} className="mr-2 ml-2 mb-4 mt-3" />
-          <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Attendance</span>
+          <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>View Attendance records</span>
         </NavLink>
       </li>
 
       <li className="flex items-center p-2 hover:bg-[#034e7c]">
         <NavLink to="/leave" className="flex items-center w-full">
           <FaWalking size={20} className="mr-2 ml-2 mb-4 mt-3" />
-          <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Apply Leave</span>
+          <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>Apply Leave</span>
         </NavLink>
       </li>
 
       <li className="flex items-center p-2 hover:bg-[#034e7c]">
         <NavLink to="/update-leave" className="flex items-center w-full">
           <TbExchange size={20} className="mr-2 ml-2 mb-4 mt-3" />
-          <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Update Leave</span>
+          <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>Update Leave</span>
         </NavLink>
       </li>
 
       <li className="flex items-center p-2 hover:bg-[#034e7c]">
         <NavLink to="/history" className="flex items-center w-full">
           <FaHistory size={20} className="mr-2 ml-2 mb-4 mt-3" />
-          <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Leave History</span>
+          <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>Leave History</span>
         </NavLink>
       </li>
 
-      <li className="flex items-center p-2 hover:bg-[#034e7c]">
-        <NavLink to="/dashboard" className="flex items-center w-full">
-          <MdSpaceDashboard size={20} className="mr-2 ml-2 mb-4 mt-3" />
-          <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Dashboard</span>
-        </NavLink>
-      </li>
+  
     </>
   );
 
@@ -75,7 +80,7 @@ const Sidebar = () => {
     <>
       <li className="flex items-center p-2 hover:bg-[#034e7c] cursor-pointer" onClick={toggleHR}>
         <MdManageAccounts size={20} className="mr-2 ml-2 mb-4 mt-3" />
-        <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Human Resource</span>
+        <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>Human Resource</span>
         {isOpen && (
           <FaChevronDown
             size={14}
@@ -86,10 +91,10 @@ const Sidebar = () => {
       {hrOpen && isOpen && (
         <ul className="ml-8 pl-8">
           <li className="flex items-center p-2 mt-4 hover:bg-[#034e7c]">
-            <NavLink to="/hr/attendance" className="w-full">Attendance</NavLink>
+            <NavLink to="/hr/attendance" className="w-full text-[14px]">Attendance</NavLink>
           </li>
           <li className="flex items-center p-2 mt-4 hover:bg-[#034e7c]">
-            <NavLink to="/hr/leave" className="w-full">Leave</NavLink>
+            <NavLink to="/hr/leave" className="w-full text-[14px]">Leave</NavLink>
           </li>
         </ul>
       )}
@@ -101,56 +106,58 @@ const Sidebar = () => {
       <li className="flex items-center p-2 hover:bg-[#034e7c]">
         <NavLink to="/admin/requests" className="flex items-center w-full">
           <FaWalking size={20} className="mr-2 ml-2 mb-4 mt-3" />
-          <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Leave Requests</span>
+          <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>Leave Requests</span>
         </NavLink>
       </li>
 
       <li className="flex items-center p-2 hover:bg-[#034e7c]">
         <NavLink to="/admin/leave-cancel-requests" className="flex items-center w-full">
           <TbExchange size={20} className="mr-2 ml-2 mb-4 mt-3" />
-          <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Leave Requests Updates</span>
+          <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>Leave Requests Updates</span>
         </NavLink>
       </li>
 
       <li className="flex items-center p-2 hover:bg-[#034e7c]">
         <NavLink to="/admin/leave-history" className="flex items-center w-full">
           <FaHistory size={20} className="mr-2 ml-2 mb-4 mt-3" />
-          <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Leave History</span>
+          <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>Leave History</span>
         </NavLink>
       </li>
 
       <li className="flex items-center p-2 hover:bg-[#034e7c]">
         <NavLink to="/admin/leave-plan" className="flex items-center w-full">
           <MdSpaceDashboard size={20} className="mr-2 ml-2 mb-4 mt-3" />
-          <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Dashboard</span>
+          <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>Dashboard</span>
         </NavLink>
       </li>
 
       <li className="flex items-center p-2 hover:bg-[#034e7c]">
         <NavLink to="/admin/employee-attendance" className="flex items-center w-full">
           <FaUserCheck size={20} className="mr-2 ml-2 mb-4 mt-3" />
-          <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Attendance</span>
+          <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>Attendance</span>
         </NavLink>
       </li>
 
       <li className="flex items-center p-2 hover:bg-[#034e7c]">
         <NavLink to="/admin/attendance-update-requests" className="flex items-center w-full">
           <RxUpdate size={20} className="mr-2 ml-2 mb-4 mt-3" />
-          <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Attendance Update Requests</span>
+          <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>Attendance Update Requests</span>
         </NavLink>
       </li>
 
       <li className="flex items-center p-2 hover:bg-[#034e7c]">
         <NavLink to="/admin/manage-employee" className="flex items-center w-full">
           <MdAdminPanelSettings size={20} className="mr-2 ml-2 mb-4 mt-3" />
-          <span className={`${isOpen ? 'block' : 'hidden'} ml-4`}>Manage Employee</span>
+          <span className={`${isOpen ? 'block' : 'hidden'} ml-4 text-[14px]`}>Manage Employee</span>
         </NavLink>
       </li>
     </>
   );
 
   return (
-    <div className={`flex ${isOpen ? 'w-64' : 'w-16'} bg-gradient-to-b from-[#6E2878] to-[#034E7C] text-white shadow-md transition-all duration-300`}>
+    <div className={`flex ${isOpen ? 'w-64' : 'w-16'} bg-gradient-to-b from-[#6E2878] to-[#034E7C] text-white shadow-md transition-all duration-300`}
+    onMouseEnter={handleMouseEnter}
+    onMouseLeave={handleMouseLeave} >
       <div className="flex flex-col w-full">
         <div className="flex items-center justify-between p-4">
           <button onClick={toggleSidebar} className="focus:outline-none">
