@@ -26,34 +26,7 @@ import { ProtectedRoute } from './pages/ProtectedRoute';
 
 function App() {
   return (
-    // <div className="App">
-    //    <NavBar />
-    //   <Menue />
-    // </div>
-
-    // <Router>
-    //   <Routes>
-    //    
-    //   
-    //   
-    //   
-    //     {/* <Route path="/admin" element={<Admin />} /> */}
-
-    //    
-    //     
-    //     <Route path="/hr/attendance" element={<HRAttendance />} />
-    //     <Route path="/hr/leave" element={<HRLeave />} />
-
-
-
-
-
-
-    //   </Routes>
-    // </Router>
-
-
-    <Router>
+     <Router>
       <AuthProvider>
         <Routes>
           {/* Public routes */}
@@ -140,6 +113,16 @@ function App() {
 
 
           {/* Protected Admin Routes */}
+
+
+          <Route
+            path="/admin/"
+            element={
+              <ProtectedRoute roles={['admin']}>
+                <EmployeeAttendance />
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/admin/employee-attendance"
