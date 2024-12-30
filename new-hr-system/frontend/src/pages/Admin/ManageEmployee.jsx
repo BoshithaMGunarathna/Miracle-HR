@@ -7,6 +7,7 @@ import DynamicTable from '../../components/Table';
 import CustomDialog from '../../components/Dialog';
 import SimpleAlert from '../../components/Alert';
 import axios from 'axios';
+import axiosClient from '../../../axios-client';
 
 const EmployeeManagement = () => {
   const [data, setData] = useState([]);
@@ -38,7 +39,7 @@ const [alertSeverity, setAlertSeverity] = useState('');
   // Confirm deletion, then proceed to delete employee
   const confirmDelete = () => {
     if (selectedEmpId) {
-      axios.delete(`http://localhost:8081/admin/manage-employee/${selectedEmpId}`)
+      axiosClient.delete(`/admin/manage-employee/${selectedEmpId}`)
         .then(response => {
           console.log('Delete Successful:', response.data);
           setAlertMessage("Employee Removed Successfully!");
@@ -87,7 +88,7 @@ const [alertSeverity, setAlertSeverity] = useState('');
 
 
 const fetchEmployees = () => {
-  axios.get('http://localhost:8081/admin/manage-employee')
+  axiosClient.get('/admin/manage-employee')
     .then(response => {
       if(response.data.status === 'success') {
         // Assuming response.data.data contains both login and leave_count data
@@ -125,7 +126,7 @@ const fetchEmployees = () => {
     };
   
     // Update the employee data
-    axios.put(`http://localhost:8081/admin/manage-employee/${empId}`, updatedEmployeeData)
+    axiosClient.put(`/admin/manage-employee/${empId}`, updatedEmployeeData)
       .then(response => {
         console.log('Update Successful:', response.data);
         setAlertMessage("Employee Details Updated Successfully!");
