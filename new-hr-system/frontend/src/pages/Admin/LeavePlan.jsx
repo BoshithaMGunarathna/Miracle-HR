@@ -7,6 +7,7 @@ import Heading from '../../components/Heading';
 import LeaveCount from '../../components/LCount'; 
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
+import axiosClient from '../../../axios-client';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -21,7 +22,7 @@ const LeavePlan = () => {
 
   // Fetch employee names on component load
   useEffect(() => {
-    axios.get('http://localhost:8081/admin/leave-plan')
+    axiosClient.get('/hr/admin/leave-plan')
       .then(response => {
         if (response.data.status === 'success') {
             console.log('hi')
@@ -38,7 +39,7 @@ const LeavePlan = () => {
   // Fetch leave data for the selected employee
   useEffect(() => {
     if (emp_id) {
-      axios.get(`http://localhost:8081/dashboard/${emp_id}`)
+      axiosClient.get(`/hr/dashboard/${emp_id}`)
         .then(response => {
           if (response.data.status === "success") {
             const leave = response.data.data;
