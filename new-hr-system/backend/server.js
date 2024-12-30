@@ -19,9 +19,9 @@ app.use(express.json());
 // MySQL connection setup
 const db = mysql.createConnection({
     host: "localhost",
-    user: "root",
-    password: "",
-    database: "hr_miracle"
+    user: "miraclecreatives_HRadmin",
+    password: "HRadmin1313",
+    database: "miraclecreatives_hr_miracle"
 });
 
 db.connect(function(err) {
@@ -1465,7 +1465,9 @@ app.get('/api/user-email/:emp_id', (req, res) => {
   });
 });
 
-
+app.get('/API', (req, res) => {
+  res.send('Backend is running and API is accessible!');
+});
 
 
 app.listen(8081, () => {
