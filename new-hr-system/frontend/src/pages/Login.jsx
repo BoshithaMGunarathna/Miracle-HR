@@ -3,6 +3,7 @@ import AuthCard from "../components/AuthCard";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { useAuth } from '../pages/AuthContext';
+import axiosClient from "../../axios-client";
 
 
 const Login = () => {
@@ -46,14 +47,14 @@ const Login = () => {
   
     if (valid) {
       try {
-        const res = await axios.post("http://localhost:8081/login", { email, password });
+        const res = await axiosClient.post("/login", { email, password });
         if (res.data.status === "success") {
           const { emp_id, role } = res.data.data;
           const token = res.data.token;
-  
+    
           // Use the login function from AuthContext instead of directly setting localStorage
           login({ emp_id, role, token });
-  
+    
           // Redirect based on the user's role
           if (role === "admin") {
             navigate("/admin/");
@@ -69,6 +70,7 @@ const Login = () => {
         setServerError(err.response?.data?.error || "Login failed");
       }
     }
+    
   };
 
   return (
