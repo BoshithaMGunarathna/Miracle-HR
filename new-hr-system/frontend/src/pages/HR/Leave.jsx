@@ -8,6 +8,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 import SimpleAlert from '../../components/Alert';
+import axiosClient from '../../../axios-client';
 
 const LeaveHistory = () => {
   const [leaveHistory, setLeaveHistory] = useState([]); 
@@ -41,7 +42,7 @@ const [startDate, setStartDate] = useState(null);
   // };
 
   const fetchEmployees = () => {
-    axios.get('http://localhost:8081/hr/leave')
+    axiosClient.get('/hr/leave')
       .then(response => {
         if (response.data.status === "error") {
           console.warn('No leave requests found');
