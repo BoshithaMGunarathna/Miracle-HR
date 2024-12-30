@@ -6,8 +6,8 @@ import { AuthProvider } from './pages/AuthContext.jsx'; // Import AuthProvider
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-  {/* Wrap App with AuthProvider */}
+     {/* Wrap App with AuthProvider */}
       <App />
-
+ 
   </React.StrictMode>
 );
