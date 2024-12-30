@@ -7,6 +7,7 @@ import Heading from '../components/Heading';
 import LeaveCount from '../components/LCount'; 
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
+import axiosClient from '../../axios-client';
 
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -23,7 +24,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     // Fetch leave count data and representatives list
-    axios.get(`http://localhost:8081/dashboard/${emp_id}`)
+    axiosClient.get(`/dashboard/${emp_id}`)
       .then(response => {
         if (response.data.status === "success") {
         
