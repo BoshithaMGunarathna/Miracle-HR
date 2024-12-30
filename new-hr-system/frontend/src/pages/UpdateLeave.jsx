@@ -8,6 +8,7 @@ import CustomDialog from '../components/Dialog';
 import SimpleAlert from '../components/Alert';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axiosClient from '../../axios-client';
 
 const EmployeeManagement = () => {
   const [data, setData] = useState([]);
@@ -45,7 +46,7 @@ const EmployeeManagement = () => {
    
     if(updatedRowData.leave_request_id){
       closeDialog();
-        axios.delete(`http://localhost:8081/update-leave-request/${updatedRowData.leave_request_id}`)
+        axiosClient.delete(`/update-leave-request/${updatedRowData.leave_request_id}`)
           .then(response => {
             
             setAlertMessage('Request Removed Successfully!');
@@ -73,7 +74,7 @@ const EmployeeManagement = () => {
     }
     else if(updatedRowData.leave_id){
       console.log('approved requests')
-      axios.post('http://localhost:8081/update-approved-leave/',updatedRowData)
+      axiosClient.post('/update-approved-leave/',updatedRowData)
           .then(response => {
             console.log('Delete Successful:', response.data);
          
@@ -126,7 +127,7 @@ const EmployeeManagement = () => {
 
 
 const fetchEmployees = () => {
-  axios.get(`http://localhost:8081/update-leave/${emp_id}`)
+  axiosClient.get(`/update-leave/${emp_id}`)
     .then(response => {
       if(response.data.status === 'success') {
         console.log('Fetched leave data:', response.data.leaveData);
