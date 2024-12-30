@@ -8,6 +8,7 @@ import Card from '../../components/Card';
 import CustomDialog from '../../components/Dialog';
 import SimpleAlert from '../../components/Alert';
 import axios from 'axios';
+import axiosClient from '../../../axios-client';
 
 const EmployeeManagement = () => {
   const [data, setData] = useState([]);
@@ -140,12 +141,12 @@ const [alertSeverity, setAlertSeverity] = useState('');
         const D = calculateDays(selectedOFD,selectedOLD)
 
         requests.push(
-          axios.delete(`http://localhost:8081/admin/leave-cancel-cancel/${selectedLId}`)
+          axiosClient.delete(`/admin/leave-cancel-cancel/${selectedLId}`)
         );
 
         if(selectedOR === 'Casual Leave' || selectedOR === 'Annual Leave' || selectedOR === 'No Pay Leave'){
           requests.push(
-            axios.put(`http://localhost:8081/admin/leave-cancel-cancel/${selectedEmpId}`,
+            axiosClient.put(`/admin/leave-cancel-cancel/${selectedEmpId}`,
             {
               // Data to be sent with the request
               reason: selectedOR,
@@ -159,7 +160,7 @@ const [alertSeverity, setAlertSeverity] = useState('');
   
       // Add the main delete request
       requests.push(
-        axios.delete(`http://localhost:8081/admin/leave-cancel/${selectedLUId}`)
+        axiosClient.delete(`/admin/leave-cancel/${selectedLUId}`)
       );
   
       // Use Promise.all to ensure both requests succeed
@@ -235,7 +236,7 @@ const [alertSeverity, setAlertSeverity] = useState('');
         const D2 = calculateDays(selectedFD,selectedLD)
 
         requests.push(
-          axios.put(`http://localhost:8081/admin/leave-approve-approve/${selectedLId}`,{
+          axiosClient.put(`/admin/leave-approve-approve/${selectedLId}`,{
             
             leave_type:selectedLeave,
             first_day:selectedFD,
@@ -249,7 +250,7 @@ const [alertSeverity, setAlertSeverity] = useState('');
         if(selectedOR === 'Casual Leave' || selectedOR === 'Annual Leave' || selectedOR === 'No Pay Leave'){
           console.log('hiii 1')
           requests.push(
-            axios.put(`http://localhost:8081/admin/leave-approve/${selectedEmpId}`,
+            axiosClient.put(`/admin/leave-approve/${selectedEmpId}`,
             {
               // Data to be sent with the request
               old_reason: selectedOR,
@@ -265,7 +266,7 @@ const [alertSeverity, setAlertSeverity] = useState('');
   
       // Add the main delete request
       requests.push(
-        axios.delete(`http://localhost:8081/admin/leave-cancel/${selectedLUId}`)
+        axiosClient.delete(`/admin/leave-cancel/${selectedLUId}`)
       );
   
       // Use Promise.all to ensure both requests succeed
@@ -306,7 +307,7 @@ const [alertSeverity, setAlertSeverity] = useState('');
 
 
 const fetchEmployees = () => {
-  axios.get('http://localhost:8081/admin/leave-update')
+  axiosClient.get('/admin/leave-update')
     .then(response => {
       console.log('action',response.data.data.action)
       if(response.data.status === 'success') {
