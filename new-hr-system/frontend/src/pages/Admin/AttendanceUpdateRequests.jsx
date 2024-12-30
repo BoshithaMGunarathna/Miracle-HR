@@ -10,6 +10,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import CustomDialog from '../../components/Dialog';
 import SimpleAlert from '../../components/Alert';
 import axios from 'axios';
+import axiosClient from '../../../axios-client';
 
 const EmployeeManagement = () => {
 
@@ -51,16 +52,16 @@ const EmployeeManagement = () => {
     const requests = [];
     if (dialogActionType === 'delete') {
       requests.push(
-        axios.delete(`http://localhost:8081/admin/attendance-update-cancel/${editingRow.a_u_id}`)
+        axiosClient.delete(`/admin/attendance-update-cancel/${editingRow.a_u_id}`)
       );
     } 
     else if (dialogActionType === 'update') {
       requests.push(
-        axios.delete(`http://localhost:8081/admin/attendance-update-cancel/${editingRow.a_u_id}`)
+        axiosClient.delete(`/admin/attendance-update-cancel/${editingRow.a_u_id}`)
       );
       if(editingRow.action==='delete'){
         requests.push(
-          axios.delete(`http://localhost:8081/admin/attendance-update-approve/${editingRow.attendance_id}`)
+          axiosClient.delete(`/admin/attendance-update-approve/${editingRow.attendance_id}`)
         );
       }
       else if (editingRow.action==='update'){
@@ -73,7 +74,7 @@ const EmployeeManagement = () => {
           hours: editingRow.hours,
         };
         requests.push(
-          axios.put(`http://localhost:8081/admin/attendance-update-approve/${editingRow.attendance_id}`,data)
+          axiosClient.put(`/admin/attendance-update-approve/${editingRow.attendance_id}`, data)
         );
       }
     }
@@ -97,26 +98,26 @@ const EmployeeManagement = () => {
   };
 
   const fetchAttendance = () => {
-    axios.get('http://localhost:8081/admin/attendance-update')
-      .then(response => {
+    axiosClient
+      .get('/admin/attendance-update')
+      .then((response) => {
         if (response.data.status === "error") {
-          console.warn('No leave requests found');
+          console.warn('No attendance data found');
           setAlertMessage("No Attendance Data Found");
-        setAlertSeverity('error');
-        setShowAlert(true);
-        setTimeout(() => {
-          setShowAlert(false);
-        }, 5000);
-       
+          setAlertSeverity('error');
+          setShowAlert(true);
+          setTimeout(() => {
+            setShowAlert(false);
+          }, 5000);
+  
           setAttendanceHistory([]); // Set attendanceHistory to an empty array
         } else {
-          console.log('Fetched leave data:', response.data.data);
-          setAttendanceHistory(response.data.data); // Set leave data into state
+          console.log('Fetched attendance data:', response.data.data);
+          setAttendanceHistory(response.data.data); // Set attendance data into state
         }
-        
       })
-      .catch(error => {
-        console.error('Error fetching leave data:', error);
+      .catch((error) => {
+        console.error('Error fetching attendance data:', error);
         setAlertMessage("Error Fetching Attendance Data");
         setAlertSeverity('error');
         setShowAlert(true);
@@ -126,6 +127,7 @@ const EmployeeManagement = () => {
         setLoading(false);
       });
   };
+  
 
   useEffect(() => {
     fetchAttendance();
