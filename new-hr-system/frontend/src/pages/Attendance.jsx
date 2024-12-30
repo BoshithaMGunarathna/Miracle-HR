@@ -8,6 +8,7 @@ import SimpleAlert from '../components/Alert';
 import CustomDialog from '../components/Dialog';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
+import axiosClient from '../../axios-client';
 
 const Attendance = () => {
   const [attendance, setAttendanceData] = useState([]); 
@@ -41,7 +42,7 @@ const [endDate, setEndDate] = useState(null);
 
   const fetchAttendance = () => {
     const emp_id = localStorage.getItem("emp_id");
-    axios.get(`http://localhost:8081/attendance/${emp_id}`)
+    axiosClient.get(`/attendance/${emp_id}`)
       .then(response => {
         console.log('Fetched leave data:', response.data.data);
         setAttendanceData(response.data.data || []); // Fallback to empty array if data is null/undefined
@@ -80,7 +81,7 @@ const [endDate, setEndDate] = useState(null);
     console.log('Deleting Attendance Record:', deleteAttendanceData);
   
     // Send the delete request
-    axios.post(`http://localhost:8081/attendance-update`, deleteAttendanceData)
+    axiosClient.post(`/attendance-update`, deleteAttendanceData)
       .then(response => {
         console.log('Delete Successful:', response.data);
         setAlertMessage("Attendance Cancel Request Sent Successfully!");
@@ -131,7 +132,7 @@ const [endDate, setEndDate] = useState(null);
     };
  console.log('updatedAttendanceData',updatedAttendanceData)
     // Update the employee data
-    axios.post(`http://localhost:8081/attendance-update`, updatedAttendanceData)
+    axiosClient.post(`/attendance-update`, updatedAttendanceData)
       .then(response => {
         console.log('Update Successful:', response.data);
         setAlertMessage("Attendance Update Request Send Successfully!");
