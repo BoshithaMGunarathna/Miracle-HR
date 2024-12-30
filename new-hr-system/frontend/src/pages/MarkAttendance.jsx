@@ -4,6 +4,7 @@ import axios from 'axios';
 import Navbar from '../components/Navbar'; 
 import Sidebar from '../components/Menue'; 
 import Heading from '../components/Heading'; 
+import axiosClient from "../../axios-client";
 
 const AttendanceSystem = () => {
   const webcamRef = useRef(null);
@@ -27,7 +28,7 @@ const AttendanceSystem = () => {
         const imageSrc = webcamRef.current.getScreenshot();
         
         // Send image to backend for recognition
-        const response = await axios.post("http://localhost:8081/start-recognition", {
+        const response = await axiosClient.post("/start-recognition", {
           image: imageSrc
         });
 
