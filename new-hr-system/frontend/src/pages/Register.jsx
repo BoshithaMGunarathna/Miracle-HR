@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import AuthCard from "../components/AuthCard";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import axiosClient from "../../axios-client";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -102,7 +103,7 @@ const Register = () => {
         formData.append("file", file); // Append the file
         formData.append("roleDescription", roleDescription);
 
-        axios.post("http://localhost:8081/register", formData, {
+        axiosClient.post("/register", formData, {
             headers: {
                 "Content-Type": "multipart/form-data"
             }
