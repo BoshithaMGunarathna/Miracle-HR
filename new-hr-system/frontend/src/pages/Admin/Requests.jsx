@@ -7,6 +7,7 @@ import SubHeading from '../../components/SubHeading';
 import DynamicTable from '../../components/Table';
 import SimpleAlert from '../../components/Alert';
 import 'react-datepicker/dist/react-datepicker.css';
+import axiosClient from '../../../axios-client';
 
 
 const Requests = () => {
@@ -69,7 +70,7 @@ const [alertSeverity, setAlertSeverity] = useState('');
 
   useEffect(() => {
     // Fetch leave requests from the backend API
-    axios.get("http://localhost:8081/admin/requests")
+    axiosClient.get("/admin/requests")
       .then(response => {
         if (response.data.status === "success") {
           // Format the dates, leave types, and reasons before setting them in state
@@ -138,7 +139,7 @@ const [alertSeverity, setAlertSeverity] = useState('');
   
     if (action === 'approve') {
    
-      axios.post("http://localhost:8081/admin/requests", requestData)
+      axiosClient.post("/admin/requests", requestData)
         .then(response => {
           if (response.data.status === "success") {
             
@@ -177,7 +178,7 @@ const [alertSeverity, setAlertSeverity] = useState('');
         });
     } else if (action === 'reject') {
       
-      axios.delete(`http://localhost:8081/admin/requests/${row.leave_request_id}`)
+      axiosClient.delete(`/admin/requests/${row.leave_request_id}`)
         .then(response => {
           if (response.data.status === "success") {
             
